@@ -3,16 +3,8 @@ import Header from './Header';
 import List from './List';
 import Main from './Main';
 
-class App extends React.Component {
-    constructor(props) {
-        super(props);
-        this.changeContent = this.changeContent.bind(this);
-        this.state = {
-            bannersOpen: true,
-            elementIdOpen: -1,
-        };
-    }
-    banners = [
+export default function App (props){
+    let banners = [
         {
             id:1,
             name: 'Ban 1',
@@ -36,60 +28,75 @@ class App extends React.Component {
         }
     ];
     
-    dataBanners = {
+    let dataBanners = {
         title: 'Banners',        
         name: 'Banner',
-        data: this.banners
+        data: banners
     }
 
-    categories = [
+    let categories = [
         {
             id:1,
-            name: 'Con 1',
-            requestName: 'con 1'
+            name: 'Cat 1',
+            requestName: 'cat 1'
         },
         {
             id:2,
-            name: 'Con 2',
-            requestName: 'con 2'
+            name: 'Cat 2',
+            requestName: 'cat 2'
         },
         {
             id:3,
-            name: 'Con 3',
-            requestName: 'con 3'
+            name: 'Cat 3',
+            requestName: 'cat 3'
         }
     ];
 
-    dataCategories = {
+    let dataCategories = {
         title: 'Categories',
         name: 'Category',
-        data: this.categories
+        data: categories,
     }
 
-    changeContent (name){
-        console.log(name);
-        this.setState({
-            bannersOpen: name === 'Banners'? true : false,
-        });
+    const [bannersOpen, setBannersOpen] = React.useState(true)
+    const [data, setData] = React.useState(dataBanners)
+    const [elementIdOpen, setElementIdOpen] =  React.useState(0)
+
+    function changeContent(name){
+        console.log(name)
+        setElementIdOpen(0)
+        if(name === "Banners"){
+            setBannersOpen(true)
+            setData(dataBanners)
+        }
+        else{
+            setBannersOpen(false)
+            setData(dataCategories)
+        }
     }
 
-    render(){
-        return (
-            <div className="App">
-                <div className="container">
-                    <Header bannersOpen={this.state.bannersOpen} onClick={this.changeContent}/>
-                    <div className="row mt-2" style={{height: "600px"}}>
-                        <div className="col-3">
-                            <List data={this.state.bannersOpen ? this.dataBanners : this.dataCategories}/>
-                        </div>
-                        <div className="col-9">
-                            <Main/>
-                        </div>
+    function chooseElement (id){
+        setElementIdOpen(id)
+    }
+
+    return (
+        <div className="App">
+            <div className="container">
+                <Header bannersOpen={bannersOpen} onClick={changeContent}/>
+                <div className="row mt-2" style={{height: "600px"}}>
+                    <div className="col-3">
+                        <List title={data.title} name={data.name} data={data.data} selected={elementIdOpen} chooseElement={chooseElement}/>
+                    </div>
+                    <div className="col-9">
+                        <Main 
+                            element={data.data.find(e => e.id === elementIdOpen)} 
+                            bannersOpen={bannersOpen} 
+                            categories={bannersOpen ? categories:  null}
+                            elementIdOpen={elementIdOpen}
+                        />
                     </div>
                 </div>
             </div>
-        );
-    }
+        </div>
+    );
 }
-
-export default App;
