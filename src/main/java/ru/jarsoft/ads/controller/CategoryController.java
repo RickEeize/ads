@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.jarsoft.ads.dto.CategoryDto;
 import ru.jarsoft.ads.exception.DeletingException;
-import ru.jarsoft.ads.exception.EmptyFieldException;
+import ru.jarsoft.ads.exception.FieldContentException;
 import ru.jarsoft.ads.exception.FieldAlreadyExistException;
 import ru.jarsoft.ads.exception.SizeLimitExceededException;
 import ru.jarsoft.ads.service.CategoryService;
@@ -31,7 +31,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDto> newCategory(@RequestBody CategoryDto categoryDto) throws FieldAlreadyExistException, EmptyFieldException, SizeLimitExceededException {
+    public ResponseEntity<CategoryDto> newCategory(@RequestBody CategoryDto categoryDto) throws FieldAlreadyExistException, FieldContentException, SizeLimitExceededException {
         categoryService.newCategory(categoryDto);
         return ResponseEntity.ok(categoryDto);
     }
@@ -42,7 +42,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryDto> updateCategory(@PathVariable int id, @RequestBody CategoryDto categoryDto) throws FieldAlreadyExistException, EmptyFieldException, SizeLimitExceededException {
+    public ResponseEntity<CategoryDto> updateCategory(@PathVariable int id, @RequestBody CategoryDto categoryDto) throws FieldAlreadyExistException, FieldContentException, SizeLimitExceededException {
         categoryService.updateCategory(id, categoryDto);
         return ResponseEntity.ok(categoryDto);
     }

@@ -10,6 +10,8 @@ import ru.jarsoft.ads.dto.BannerDto;
 import ru.jarsoft.ads.model.Banner;
 import ru.jarsoft.ads.repository.CategoryRepository;
 
+import java.math.BigDecimal;
+
 @Mapper(componentModel = "spring")
 @Component
 public abstract class BannerMapper {
@@ -25,5 +27,6 @@ public abstract class BannerMapper {
     @AfterMapping
     public void map(@MappingTarget Banner target, BannerDto source) {
         target.setCategory(repo.findByName(source.getCategoryName()));
+        target.setPrice(new BigDecimal(source.getPrice()));
     }
 }

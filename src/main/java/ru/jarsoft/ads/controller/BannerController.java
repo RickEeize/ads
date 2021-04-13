@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.jarsoft.ads.dto.BannerDto;
-import ru.jarsoft.ads.exception.EmptyFieldException;
+import ru.jarsoft.ads.exception.FieldContentException;
 import ru.jarsoft.ads.exception.FieldAlreadyExistException;
 import ru.jarsoft.ads.exception.SizeLimitExceededException;
 import ru.jarsoft.ads.service.BannerService;
@@ -29,7 +29,7 @@ public class BannerController {
     }
 
     @PostMapping
-    public ResponseEntity<BannerDto> newBanner(@RequestBody BannerDto bannerDto) throws FieldAlreadyExistException, EmptyFieldException, SizeLimitExceededException {
+    public ResponseEntity<BannerDto> newBanner(@RequestBody BannerDto bannerDto) throws FieldAlreadyExistException, FieldContentException, SizeLimitExceededException {
         System.out.println(bannerDto);
         return ResponseEntity.ok(bannerService.newBanner(bannerDto));
     }
@@ -40,7 +40,7 @@ public class BannerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BannerDto> updateBanner(@PathVariable int id, @RequestBody BannerDto bannerDto) throws FieldAlreadyExistException, EmptyFieldException, SizeLimitExceededException {
+    public ResponseEntity<BannerDto> updateBanner(@PathVariable int id, @RequestBody BannerDto bannerDto) throws FieldAlreadyExistException, FieldContentException, SizeLimitExceededException {
         return ResponseEntity.ok(bannerService.updateBanner(id, bannerDto));
     }
 

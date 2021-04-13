@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.jarsoft.ads.dto.CategoryDto;
 import ru.jarsoft.ads.exception.DeletingException;
-import ru.jarsoft.ads.exception.EmptyFieldException;
+import ru.jarsoft.ads.exception.FieldContentException;
 import ru.jarsoft.ads.exception.FieldAlreadyExistException;
 import ru.jarsoft.ads.exception.SizeLimitExceededException;
 import ru.jarsoft.ads.mapper.CategoryMapper;
@@ -44,13 +44,13 @@ public class CategoryService {
         return categoryMapper.map(category);
     }
 
-    public void newCategory(CategoryDto categoryDto) throws FieldAlreadyExistException, EmptyFieldException, SizeLimitExceededException {
+    public void newCategory(CategoryDto categoryDto) throws FieldAlreadyExistException, FieldContentException, SizeLimitExceededException {
         checkCategoryCorrect(categoryDto);
         Category newCategory = categoryMapper.map(categoryDto);
         categoryRepository.save(newCategory);
     }
 
-    public void updateCategory(int id, CategoryDto categoryDto) throws EmptyFieldException, FieldAlreadyExistException, SizeLimitExceededException {
+    public void updateCategory(int id, CategoryDto categoryDto) throws FieldContentException, FieldAlreadyExistException, SizeLimitExceededException {
         checkCategoryCorrect(categoryDto);
         Category newCategory = categoryMapper.map(categoryDto);
         Category oldCategory = categoryRepository.findById(id).orElseThrow();
@@ -72,13 +72,13 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
-    private void checkCategoryCorrect(CategoryDto categoryDto) throws EmptyFieldException, FieldAlreadyExistException, SizeLimitExceededException {
+    private void checkCategoryCorrect(CategoryDto categoryDto) throws FieldContentException, FieldAlreadyExistException, SizeLimitExceededException {
         if (StringUtils.isBlank(categoryDto.getName()))
-            throw new EmptyFieldException("Category name cannot be blank");
+            throw new FieldContentException("Category name cannot be blank");
         if(categoryDto.getName().length() > 255)
             throw new SizeLimitExceededException("Category name must be no longer than 255");
         if (StringUtils.isBlank(categoryDto.getRequestName()))
-            throw new EmptyFieldException("Category request name cannot be blank");
+            throw new FieldContentException("Category request name cannot be blank");
         if(categoryDto.getRequestName().length() > 255)
             throw new SizeLimitExceededException("Category request name must be no longer than 255");
         categoryDto.setName(categoryDto.getName().trim());

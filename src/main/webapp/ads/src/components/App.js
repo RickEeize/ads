@@ -4,8 +4,8 @@ import List from './List';
 import Main from './Main';
 
 export default function App (props){
-    const [banners, setBanners] = React.useState([]);    
-    const [categories, setCategories] = React.useState([]);
+    const [banners, setBanners] = React.useState([])
+    const [categories, setCategories] = React.useState([])
     const [bannersOpen, setBannersOpen] = React.useState(true)
     const [elementIdOpen, setElementIdOpen] =  React.useState(0)
     const [input, setInput] = React.useState('')
@@ -15,28 +15,8 @@ export default function App (props){
     const [dataFiltered, setDataFiltered] = React.useState([])
     
     React.useEffect(() => {
-        fetch("http://localhost:8080/categories")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    setCategories(result)
-                    setCLoaded(true)
-                },
-                (error) => {
-                }
-            )
-        fetch("http://localhost:8080/banners")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    setBanners(result)
-                    setData(result)
-                    setDataFiltered(result)
-                    setBLoaded(true)
-                },
-                (error) => {
-                }
-            )
+        getCategories(false)
+        getBanners()
       }, [])
 
     function getBanners(){

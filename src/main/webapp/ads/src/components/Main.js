@@ -23,7 +23,7 @@ function BannerForm(element, categories){
             
             <div className="row mb-3">
                 <label className="col-2 form-label">Text</label>
-                <textarea id="content" className="col form-control" rows="5" cols="50" defaultValue={element.content}></textarea>
+                <textarea id="content" className="col form-control shadow-none" rows="5" cols="50" defaultValue={element.content}></textarea>
             </div>
         </form>
     )

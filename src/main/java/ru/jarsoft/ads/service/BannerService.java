@@ -4,8 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.jarsoft.ads.dto.BannerDto;
-import ru.jarsoft.ads.dto.CategoryDto;
-import ru.jarsoft.ads.exception.EmptyFieldException;
+import ru.jarsoft.ads.exception.FieldContentException;
 import ru.jarsoft.ads.exception.FieldAlreadyExistException;
 import ru.jarsoft.ads.exception.SizeLimitExceededException;
 import ru.jarsoft.ads.mapper.BannerMapper;
@@ -13,7 +12,6 @@ import ru.jarsoft.ads.model.Banner;
 import ru.jarsoft.ads.repository.BannerRepository;
 
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,13 +36,13 @@ public class BannerService {
         return bannerMapper.map(banner);
     }
 
-    public BannerDto newBanner(BannerDto bannerDto) throws FieldAlreadyExistException, EmptyFieldException, SizeLimitExceededException {
+    public BannerDto newBanner(BannerDto bannerDto) throws FieldAlreadyExistException, FieldContentException, SizeLimitExceededException {
         checkBannerCorrect(bannerDto);
         Banner b = bannerMapper.map(bannerDto);
         return bannerMapper.map(bannerRepository.save(b));
     }
 
-    public BannerDto updateBanner(int id, BannerDto bannerDto) throws FieldAlreadyExistException, EmptyFieldException, SizeLimitExceededException {
+    public BannerDto updateBanner(int id, BannerDto bannerDto) throws FieldAlreadyExistException, FieldContentException, SizeLimitExceededException {
         checkBannerCorrect(bannerDto);
         Banner newBanner = bannerMapper.map(bannerDto);
         Banner oldBanner = bannerRepository.findById(id).orElseThrow();
@@ -63,17 +61,23 @@ public class BannerService {
         return bannerMapper.map(banner);
     }
 
-    private void checkBannerCorrect(BannerDto bannerDto) throws EmptyFieldException, FieldAlreadyExistException, SizeLimitExceededException {
+    private void checkBannerCorrect(BannerDto bannerDto) throws FieldContentException, FieldAlreadyExistException, SizeLimitExceededException {
         if (StringUtils.isBlank(bannerDto.getName()))
-            throw new EmptyFieldException("Banner name cannot be blank");
+            throw new FieldContentException("Banner name cannot be blank");
         if(bannerDto.getName().length() > 255)
             throw new SizeLimitExceededException("Banner name must be no longer than 255");
         if (StringUtils.isBlank(bannerDto.getContent()))
-            throw new EmptyFieldException("Banner content cannot be blank");
+            throw new FieldContentException("Banner content cannot be blank");
         if(bannerDto.getPrice() == null)
-            throw new EmptyFieldException("Need to specify banner price");
+            throw new FieldContentException("Need to specify banner price");
         if (StringUtils.isBlank(bannerDto.getCategoryName()))
-            throw new EmptyFieldException("Banner category name cannot be blank");
+            throw new FieldContentException("Banner category name cannot be blank");
+        if (StringUtils.isBlank(bannerDto.getPrice()))
+            throw new FieldContentException("Banner price cannot be blank");
+        bannerDto.setPrice(bannerDto.getPrice().trim());
+        if(!bannerDto.getPrice().matches("[0-9]{0,8}([.][0-9]{1,2})?")){
+            throw new FieldContentException("Banner price must be in the form `xxxxxxxx.xx`");
+        }
         bannerDto.setName(bannerDto.getName().trim());
         bannerDto.setCategoryName(bannerDto.getCategoryName().trim());
         if (bannerRepository.findByName(bannerDto.getName()) != null) {
