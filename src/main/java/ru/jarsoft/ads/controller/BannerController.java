@@ -11,6 +11,7 @@ import ru.jarsoft.ads.service.BannerService;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("banners")
 public class BannerController {

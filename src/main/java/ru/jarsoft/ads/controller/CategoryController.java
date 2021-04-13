@@ -12,6 +12,8 @@ import ru.jarsoft.ads.service.CategoryService;
 
 import java.util.List;
 
+
+@CrossOrigin
 @RestController
 @RequestMapping("categories")
 public class CategoryController {

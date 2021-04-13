@@ -8,6 +8,8 @@ import ru.jarsoft.ads.service.BannerInfoService;
 
 import javax.servlet.http.HttpServletRequest;
 
+
+@CrossOrigin
 @RestController
 @RequestMapping("bid")
 public class BannerInfoController {
