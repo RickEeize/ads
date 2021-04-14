@@ -75,7 +75,7 @@ public class BannerService {
         if (StringUtils.isBlank(bannerDto.getPrice()))
             throw new FieldContentException("Banner price cannot be blank");
         bannerDto.setPrice(bannerDto.getPrice().trim());
-        if(!bannerDto.getPrice().matches("[0-9]{0,8}([.][0-9]{1,2})?")){
+        if(!bannerDto.getPrice().matches("[0-9]{0,6}([.][0-9]{1,2})?")){
             throw new FieldContentException("Banner price must be in the form `xxxxxxxx.xx`");
         }
         bannerDto.setName(bannerDto.getName().trim());
