@@ -4,6 +4,10 @@ import List from './List';
 import Main from './Main';
 
 export default function App (props){
+    const url = 'http://localhost:8080'
+    const bannersUrl  = url + '/banners/'
+    const categoriesUrl  = url + '/categories/'
+
     const [banners, setBanners] = React.useState([])
     const [categories, setCategories] = React.useState([])
     const [bannersOpen, setBannersOpen] = React.useState(true)
@@ -22,7 +26,7 @@ export default function App (props){
 
     function getBanners(){
         setBLoaded(false)
-        fetch("/banners")
+        fetch(bannersUrl)
         .then(res => res.json())
         .then(
             (result) => {
@@ -37,7 +41,7 @@ export default function App (props){
 
     function getCategories(main){
         setCLoaded(false)
-        fetch("/categories")
+        fetch(categoriesUrl)
         .then(res => res.json())
         .then(
             (result) => {
@@ -96,7 +100,7 @@ export default function App (props){
                 requestName: requestName
             }
 
-        fetch(bannersOpen ? "/banners" : "/categories", {
+        fetch(bannersOpen ? bannersUrl : categoriesUrl, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
@@ -137,7 +141,7 @@ export default function App (props){
                 requestName: requestName
             }
 
-        fetch((bannersOpen ? "/banners/" : "/categories/") + elementIdOpen, {
+        fetch((bannersOpen ? bannersUrl : categoriesUrl) + elementIdOpen, {
             method: 'PUT',
             body: JSON.stringify(data),
             headers: {
@@ -162,8 +166,7 @@ export default function App (props){
 
     function deleteElement(){
         setRequestError('')
-        let url = (bannersOpen ? "/banners/" : "/categories/") + elementIdOpen
-        fetch(url, {
+        fetch((bannersOpen ? bannersUrl : categoriesUrl) + elementIdOpen, {
             method: 'DELETE'
         })
         .then(res => res.json())

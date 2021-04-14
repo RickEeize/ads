@@ -71,7 +71,6 @@ public class BannerInfoService {
         request.setDate(LocalDateTime.now());
         request.setIpAddress(ip);
         request.setUserAgent(userAgent);
-        System.out.println(request);
         requestRepository.save(request);
     }
 }
