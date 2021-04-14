@@ -14,6 +14,5 @@
 
 ### Frontend:
 #### Собрать и запустить
-+ {project_dir}\src\main\webapp\ads npm run build
-+ {project_dir}\src\main\webapp\ads npm install -g serve
-+ {project_dir}\src\main\webapp\ads serve -s build
++ {project_dir}\src\main\webapp\ads npm install
++ {project_dir}\src\main\webapp\ads npm start
