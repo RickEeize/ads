@@ -13,6 +13,7 @@ export default function App (props){
     const [cLoaded, setCLoaded] = React.useState(false)
     const [data, setData] = React.useState([])
     const [dataFiltered, setDataFiltered] = React.useState([])
+    const [requestError, setRequestError] = React.useState('')
     
     React.useEffect(() => {
         getCategories(false)
@@ -21,7 +22,7 @@ export default function App (props){
 
     function getBanners(){
         setBLoaded(false)
-        fetch("http://localhost:8080/banners")
+        fetch("/banners")
         .then(res => res.json())
         .then(
             (result) => {
@@ -30,33 +31,29 @@ export default function App (props){
                 setDataFiltered(result)
                 setBLoaded(true)
                 setBannersOpen(true)
-            },
-            (error) => {
             }
         )
     }
 
     function getCategories(main){
         setCLoaded(false)
-        fetch("http://localhost:8080/categories")
+        fetch("/categories")
         .then(res => res.json())
         .then(
             (result) => {
-                setCategories(result)
-                setCLoaded(true)
                 if(main){
                     setData(result)
                     setDataFiltered(result)
                     setBannersOpen(false)
                 }
-            },
-            (error) => {
+                setCategories(result)
+                setCLoaded(true)
             }
         )
     }
     
     function changeContent(name){
-        console.log(name)
+        setRequestError('')
         setElementIdOpen(0)
         if(name === "Banners"){
             getCategories(false)
@@ -68,10 +65,12 @@ export default function App (props){
     }
 
     function chooseElement (id){
+        setRequestError('')
         setElementIdOpen(id)
     }
 
     function doSearch(e){ 
+        setRequestError('')
         let inp = e.target.value;
         setElementIdOpen(0)
         const elements = data.filter(el => {
@@ -81,12 +80,115 @@ export default function App (props){
         setDataFiltered(elements);
     }
 
+    function saveElement(name, price, categoryName, content, requestName){
+        setRequestError('')
+        let data = {}
+        if(bannersOpen)
+            data = {
+                name: name,
+                price : price,
+                categoryName: categoryName,
+                content: content
+            }
+        else
+            data = {
+                name: name,
+                requestName: requestName
+            }
+
+        fetch(bannersOpen ? "/banners" : "/categories", {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+              }
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                if(result.error) {
+                    setRequestError(result.message)
+                    return
+                }
+                if(bannersOpen) {
+                    getBanners()
+                    getCategories(false)
+                }
+                else getCategories(true)
+            }
+        )
+    }
+
+    function editElement(name, price, categoryName, content, requestName){
+        setRequestError('')
+        let data = {}
+        if(bannersOpen)
+            data = {
+                id:elementIdOpen,
+                name: name,
+                price : price,
+                categoryName: categoryName,
+                content: content
+            }
+        else
+            data = {
+                id: elementIdOpen,
+                name: name,
+                requestName: requestName
+            }
+
+        fetch((bannersOpen ? "/banners/" : "/categories/") + elementIdOpen, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+              }
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                if(result.error) {
+                    setRequestError(result.message)
+                    return
+                }
+                if(bannersOpen) {
+                    getBanners()
+                    getCategories(false)
+                }
+                else getCategories(true)
+            }
+        )
+    }
+
+    function deleteElement(){
+        setRequestError('')
+        let url = (bannersOpen ? "/banners/" : "/categories/") + elementIdOpen
+        fetch(url, {
+            method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                if(result.error) {
+                    setRequestError(result.message)
+                    return
+                }
+                setElementIdOpen(0)
+                if(bannersOpen) {
+                    getBanners()
+                    getCategories(false)
+                }
+                else getCategories(true)
+            }
+        )
+    }
+
     if(bLoaded && cLoaded)
         return (
             <div className="App">
                 <div className="container">
                     <Header bannersOpen={bannersOpen} onClick={changeContent}/>
-                    <div className="row mt-2" style={{height: "600px"}}>
+                    <div className="row mt-2" style={{minHeight: "600px", maxHeight: "600px"}}>
                         <div className="col-3">
                             <List 
                                 title={bannersOpen ? 'Banners':  'Categories'} 
@@ -104,6 +206,10 @@ export default function App (props){
                                 bannersOpen={bannersOpen} 
                                 categories={bannersOpen ? categories:  null}
                                 elementIdOpen={elementIdOpen}
+                                saveElement={saveElement}
+                                editElement={editElement}
+                                deleteElement={deleteElement}
+                                error={requestError}
                             />
                         </div>
                     </div>

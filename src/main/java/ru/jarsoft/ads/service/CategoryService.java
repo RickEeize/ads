@@ -50,16 +50,17 @@ public class CategoryService {
         categoryRepository.save(newCategory);
     }
 
-    public void updateCategory(int id, CategoryDto categoryDto) throws FieldContentException, FieldAlreadyExistException, SizeLimitExceededException {
+    public CategoryDto updateCategory(int id, CategoryDto categoryDto) throws FieldContentException, FieldAlreadyExistException, SizeLimitExceededException {
         checkCategoryCorrect(categoryDto);
         Category newCategory = categoryMapper.map(categoryDto);
         Category oldCategory = categoryRepository.findById(id).orElseThrow();
         oldCategory.setName(newCategory.getName());
         oldCategory.setRequestName(newCategory.getRequestName());
         categoryRepository.save(oldCategory);
+        return categoryMapper.map(oldCategory);
     }
 
-    public void deleteCategory(int id) throws DeletingException {
+    public CategoryDto deleteCategory(int id) throws DeletingException {
         Category category = categoryRepository.findById(id).orElseThrow();
         List<Banner> banners = bannerRepository.findAllByDeletedIsFalseAndCategory_NameEquals(category.getName());
         if (!banners.isEmpty()) {
@@ -70,6 +71,7 @@ public class CategoryService {
         }
         category.setDeleted(true);
         categoryRepository.save(category);
+        return categoryMapper.map(category);
     }
 
     private void checkCategoryCorrect(CategoryDto categoryDto) throws FieldContentException, FieldAlreadyExistException, SizeLimitExceededException {
@@ -83,9 +85,11 @@ public class CategoryService {
             throw new SizeLimitExceededException("Category request name must be no longer than 255");
         categoryDto.setName(categoryDto.getName().trim());
         categoryDto.setRequestName(categoryDto.getRequestName().trim());
-        if (categoryRepository.findByName(categoryDto.getName()) != null)
+        Category byName = categoryRepository.findByNameAndDeletedIsFalse(categoryDto.getName());
+        if (byName != null && byName.getId() != categoryDto.getId())
             throw new FieldAlreadyExistException("Category with name '" + categoryDto.getName() + "' already exist");
-        if (categoryRepository.findByRequestName(categoryDto.getRequestName()) != null)
+        Category byRequestName = categoryRepository.findByRequestNameAndDeletedIsFalse(categoryDto.getRequestName());
+        if (byRequestName != null && byRequestName.getId() != categoryDto.getId())
             throw new FieldAlreadyExistException(
                     "Category with request name '" + categoryDto.getRequestName() + "' already exist"
             );

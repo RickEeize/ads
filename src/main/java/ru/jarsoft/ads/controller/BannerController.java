@@ -30,7 +30,6 @@ public class BannerController {
 
     @PostMapping
     public ResponseEntity<BannerDto> newBanner(@RequestBody BannerDto bannerDto) throws FieldAlreadyExistException, FieldContentException, SizeLimitExceededException {
-        System.out.println(bannerDto);
         return ResponseEntity.ok(bannerService.newBanner(bannerDto));
     }
 

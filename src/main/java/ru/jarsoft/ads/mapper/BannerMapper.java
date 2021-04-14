@@ -26,7 +26,7 @@ public abstract class BannerMapper {
 
     @AfterMapping
     public void map(@MappingTarget Banner target, BannerDto source) {
-        target.setCategory(repo.findByName(source.getCategoryName()));
+        target.setCategory(repo.findByNameAndDeletedIsFalse(source.getCategoryName()));
         target.setPrice(new BigDecimal(source.getPrice()));
     }
 }

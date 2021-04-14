@@ -12,5 +12,5 @@ public interface BannerRepository extends JpaRepository<Banner, Integer> {
     List<Banner> findAllByDeletedIsFalse();
     List<Banner> findAllByDeletedIsFalseAndCategory_NameEquals(String category_name);
 
-    Banner findByName(String name);
+    Banner findByNameAndDeletedIsFalse(String name);
 }

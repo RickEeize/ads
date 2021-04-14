@@ -80,7 +80,9 @@ public class BannerService {
         }
         bannerDto.setName(bannerDto.getName().trim());
         bannerDto.setCategoryName(bannerDto.getCategoryName().trim());
-        if (bannerRepository.findByName(bannerDto.getName()) != null) {
+
+        Banner byName = bannerRepository.findByNameAndDeletedIsFalse(bannerDto.getName());
+        if (byName != null && byName.getId() != bannerDto.getId()) {
             throw new FieldAlreadyExistException(
                     "Banner with name '" + bannerDto.getName() + "' already exist"
             );
